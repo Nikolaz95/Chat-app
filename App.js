@@ -6,16 +6,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import { NavigationContainer } from '@react-navigation/native';
+import AppProvider from './components/contexts/AppProvider';
 import AuthNavigator from './components/navigator/AuthNavigator';
-import AppNavigator from './components/navigator/AppNavigator';
-import BottomTabNavigator from './components/navigator/BottomTabNavigation';
 
 export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.container}>
+        <AppProvider>
+            <AuthNavigator/>
+        </AppProvider>
 
-      <AuthNavigator />
+      
+
 
       {/* <AppNavigator /> */}
 

@@ -8,7 +8,6 @@ const Drawer = createDrawerNavigator();
 export default function AppNavigator() {
   return (
     <Drawer.Navigator>
-        
       <Drawer.Screen name="Chat" component={Chat} />
       <Drawer.Screen name="Settings" component={BottomTabNavigator} />
     </Drawer.Navigator>
