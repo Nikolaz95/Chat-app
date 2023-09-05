@@ -1,12 +1,23 @@
-import React, { useContext, useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native'
+import React, { useContext, useState, useEffect  } from 'react'
+import { View, Text, StyleSheet, TextInput} from 'react-native'
 import { TouchableOpacity } from 'react-native';
 import { AuthContext } from '../contexts/AppProvider';
 
-export default function Login({navigation}) {
+
+export default function Login({navigation , route}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [LoginMessage, setLoginMessage] = useState('');
   const {handleLogin, loginMessage} = useContext(AuthContext);
+
+  useEffect(() => {
+
+    if (route.params?.action === 'logout') {
+      setUserName('');
+      setPassword('');
+      {loginMessage}('');
+    }
+  }, [route.params]);
 
 console.log('login',loginMessage)
   return (
@@ -25,11 +36,6 @@ console.log('login',loginMessage)
         onChangeText={(text)=> setPassword(text)} ></TextInput>
       
       <Text style= {loginMessage === 'You have registered succesfully. Please login!'? styles.successmsg: styles.errormsg}>{loginMessage}</Text>
-
-      {/* <Text style={styles.textinput}>Incorrect user information</Text> */}
-
-
-      {/* <Text style={styles.textinput2}>You have successfully registered! Please login.</Text> */}
 
       
       <TouchableOpacity 

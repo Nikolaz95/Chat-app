@@ -40,6 +40,9 @@ export default function Register({navigation}) {
     }
 
   }
+
+
+  
   return (
     <View style={styles.container}>
 
@@ -55,8 +58,9 @@ export default function Register({navigation}) {
           value={password}
           onChangeText={(text)=>setPassword(text)} ></TextInput>
 
-        {/* <Text style={styles.textinput}>Username alredy exists</Text> */}
         {registerResult && <Text style={styles.errorMsgrg}>{registerResult}</Text>}
+
+        
         <TouchableOpacity 
            style={styles.inputReg} 
            onPress={()=> handleRegister()}>

@@ -1,9 +1,10 @@
 import React, {useContext, useState} from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { AuthContext } from '../contexts/AppProvider'
+import { AuthContext } from '../contexts/AppProvider';
 
 
-export default function Message({message,userID, setShowDeletion, showDeletion}) {
+
+export default function Message({message,userID, setShowDeletion, showDeletion, setItemId}) {
 
     const {accessToken} = useContext(AuthContext);
     
@@ -14,8 +15,18 @@ export default function Message({message,userID, setShowDeletion, showDeletion})
 
     const handleDelete = () =>{
         setShowDeletion(true);
+        setItemId(message._id);
     }
 
+
+      const formatMessageDate = (dateString) => {
+        const messageDate = new Date(dateString);
+        const hours = messageDate.getHours();
+        const minutes = messageDate.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+        return `${formattedHours}:${minutes}:${ampm}`;
+      };
 
   return (
     <View style={styles.container}>
@@ -23,20 +34,15 @@ export default function Message({message,userID, setShowDeletion, showDeletion})
         ? ( <View style={styles.right}>
                 <TouchableOpacity onPress={()=> handleDelete()}>
                 <Text style={styles.textConten}>{message.content}</Text>
-                <Text>{message.date}</Text>
+                <Text>{formatMessageDate(message.date)}</Text>
                 </TouchableOpacity>
             </View>) 
         : (<View style={styles.left}>
             <Text style={styles.textConten}>{message.content}</Text>
-            <Text>{message.date}</Text>
+            <Text>{formatMessageDate(message.date)}</Text>
          </View>)
         }
         
-        {/* <TouchableOpacity onPress={()=> userID === accessToken.userID ? handleDelete() : null}>
-            <Text style={userID === accessToken.userID ? styles.right : styles.left} >
-             {message}
-            </Text>
-        </TouchableOpacity> */}
     </View>
 
   )

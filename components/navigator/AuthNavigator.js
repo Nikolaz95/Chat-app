@@ -15,7 +15,7 @@ export default function AuthNavigator() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={Login} /> 
         <Stack.Screen name="Register" component={Register} />
-        <Stack.Screen name="Chat pages" component={AppNavigator} />  
+        <Stack.Screen name="Chat pages" component={AppNavigator} options={{headerShown: false}}/>  
       </Stack.Navigator>
   );
 }

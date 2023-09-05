@@ -10,10 +10,13 @@ import Message from './Message';
 
 export default function Chat() {
   const [allMessages, setAllMessages] = useState(null);
-  const URL = 'https://chat-api-with-auth.up.railway.app/messages'
+  const URL = 'https://chat-api-with-auth.up.railway.app/messages';
   const {accessToken} = useContext(AuthContext);
   const [newMessage, setNewMessage] = useState('');
   const [showDeletion, setShowDeletion] = useState(false);
+  const [itemId, setItemId] = useState(null);
+
+  
 
   const fetchData = async() =>{
     try{
@@ -38,14 +41,6 @@ export default function Chat() {
   },[])
 
 
-  //trebam ovo napravit
-
-  /* const deleteMessage = async() =>{
-    try{
-
-    }catch(error)
-  } */
-
   const handleSendMessage = async() =>{
     try{
       const response = await fetch(URL, {
@@ -58,32 +53,91 @@ export default function Chat() {
           content: newMessage,
         }),
       })
-
+      
       const result = await response.json();
       if(result.status == '201'){
         fetchData();
+
+        //resetin TextInput after sending the message
+        setNewMessage('');
       }
       console.log('result',result);
     }catch(error) {
       console.log(error);
     }
   }
+
+
+
+  /* delete message */
+
+
+  const deleteMessage = async(id) =>{
+    try{
+      const response = await fetch(URL + '/'+ `${id}`, {
+        method: 'DELETE',
+        headers: {
+          "Authorization": "Bearer " + accessToken.accessToken,
+        },
+      });
+
+      const resultat = await response.json();
+      if(resultat.status == '200') {
+        setAllMessages(allMessages.filter((item) => item._id != id))
+      }
+      setShowDeletion(false);
+      setItemId(null);
+
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  /* cancel delete function */
+
+  const CancelDelete = () => {
+    setShowDeletion(false);
+    setItemId(null);
+  }
+
+
+
+
   return (
     <View style={styles.container}>
       <FlatList
       data = {allMessages}
       inverted
-      renderItem={({item}) => (item.user != null 
-        && <Message key={item._id} message={item} userID={item.user._id} setShowDeletion={setShowDeletion} showDeletion={showDeletion} />)}
+      renderItem={({item}) => (
+        item.user != null 
+        && <Message key={item._id} 
+        message={item} 
+        userID={item.user._id} 
+        setShowDeletion={setShowDeletion} 
+        showDeletion={showDeletion}
+        setItemId = {setItemId}
+         />
+         )}
+
       keyExtractor={item => item.id}
       >
       </FlatList>
 
       {showDeletion
         ? <View style={styles.deletionBox}>
-            <MaterialIcons name="delete" size={24} color="black" /* onPress={()=>deleteMessage()} */ />
-            <Ionicons name="close" size={24} color="black" />
+            <MaterialIcons name="delete" 
+            size={25} 
+            color="black" 
+            onPress={()=>deleteMessage(itemId)} />
+
+
+            <Ionicons name="close" 
+            size={25} 
+            color="black"
+            onPress={() => CancelDelete()} />
           </View>
+
+
         : <View style={styles.kontent}>
           <TextInput 
             style={styles.input} 
@@ -91,7 +145,9 @@ export default function Chat() {
             value={newMessage} 
             onChangeText={(text)=>setNewMessage(text)}>
             </TextInput>
-          <TouchableOpacity onPress={()=> handleSendMessage()}>
+
+          <TouchableOpacity 
+            onPress={()=> handleSendMessage()}>
             <FontAwesome name="send" size={25} color="blue" />
           </TouchableOpacity>
           </View>}
