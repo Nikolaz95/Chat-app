@@ -1,7 +1,7 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Profile from '../bottomTabNav/Profile';
-import Camera from '../bottomTabNav/Camera';
+import CameraApp from '../bottomTabNav/CameraApp.js';
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -13,7 +13,7 @@ export default function BottomTabNavigator () {
       <Tab.Screen name="Profile"  component={Profile} options={{headerShown: false,
         tabBarIcon: () => <AntDesign name="profile" size={25} color="blue" />
       }}/>
-      <Tab.Screen name="Camera" component={Camera} options={{headerShown: false,
+      <Tab.Screen name="Camera" component={CameraApp} options={{headerShown: false,
         tabBarIcon: () => <AntDesign name="camerao" size={25} color="blue" />
          }}/>
     </Tab.Navigator>
