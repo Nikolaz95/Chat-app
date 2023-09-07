@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     generalButton: {
+      backgroundColor: 'skyblue',
       borderWidth: 1,
       borderRadius: 10,
       borderColor: 'black',

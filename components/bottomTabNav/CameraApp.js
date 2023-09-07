@@ -1,7 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react'
 import { View, Text, StyleSheet, TextInput, Button, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import { useIsFocused } from '@react-navigation/native';
+import { AuthContext } from '../contexts/AppProvider';
 
 
 import { FontAwesome } from '@expo/vector-icons';
@@ -10,11 +12,11 @@ import { Feather } from '@expo/vector-icons';
 
 export default function CameraApp() {
 
-  /* Permission */
-
 
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasMediaPermission, setHasMediaPermission] = useState(null);
+  const isFocused = useIsFocused();
+  const {setProfileImage} = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -29,7 +31,6 @@ export default function CameraApp() {
   }, );
 
 
-  /* Camera functionalities */
 
 
   const cameraRef = useRef(null);
@@ -49,25 +50,22 @@ export default function CameraApp() {
   }
 
 
-  /* saving picture */
 
   const [picture, setPicture] = useState(null);
 
   const savePicture = async () => {
     try {
-      // Create an asset out fo the picture
       const asset = await MediaLibrary.createAssetAsync(picture.uri)
       
-      // Retrieve an existing album
       const album = await MediaLibrary.getAlbumAsync('Expo');
 
       if (album == null) {
         await MediaLibrary.createAlbumAsync('Expo', asset, false)
       } else {
-        // Put the asset (picutre) in the album
         await MediaLibrary.addAssetsToAlbumAsync(asset, album.id, false);
       }
 
+      setProfileImage(picture.uri);
       setPicture(null)
     } catch (error) {
       console.log(error)
@@ -108,40 +106,34 @@ export default function CameraApp() {
   } else {
     return (
       <SafeAreaView style={styles.container}>
-  
-          <Camera style={styles.cameraContainer} 
-                  type={type} 
-                  flashMode={flash} 
-                  ref={cameraRef}>
-  
-            <View style={styles.buttonsTopContainer}>
-  
-              <TouchableOpacity style={styles.generalButton}>
-              <FontAwesome name="refresh" size={24} color="white" onPress={() => toggleCameraType()}/>
-              </TouchableOpacity>
-  
-              <TouchableOpacity style={styles.generalButton}>
-                 <Entypo name="flash" size={25} color={flash === FlashMode.off ? 'white' : 'yellow'} onPress={() => toggleFlash()}/>
-              </TouchableOpacity>
-  
-            </View>
-            <View style={styles.buttonsBottomContainer}>
-                 <TouchableOpacity style={styles.cameraButton}>
-                     <Entypo name="camera" size={25} color="white" onPress={() => takePicture()} />
-                 </TouchableOpacity>
-            </View>
-          </Camera>
+        {isFocused
+        && <Camera style={styles.cameraContainer} 
+        type={type} 
+        flashMode={flash} 
+        ref={cameraRef}>
+
+      <View style={styles.buttonsTopContainer}>
+
+     <TouchableOpacity style={styles.generalButton}>
+      <FontAwesome name="refresh" size={24} color="white" onPress={() => toggleCameraType()}/>
+      </TouchableOpacity>
+
+     <TouchableOpacity style={styles.generalButton}>
+       <Entypo name="flash" size={25} color={flash === FlashMode.off ? 'white' : 'yellow'} onPress={() => toggleFlash()}/>
+      </TouchableOpacity>
+
+   </View>
+    <View style={styles.buttonsBottomContainer}>
+       <TouchableOpacity style={styles.cameraButton}>
+           <Entypo name="camera" size={25} color="white" onPress={() => takePicture()} />
+       </TouchableOpacity>
+   </View>
+</Camera>}
+          
       </SafeAreaView>
     )
     
   }
-
-
-
-
-
-
-
 
 }
 

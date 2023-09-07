@@ -5,18 +5,13 @@ import { AuthContext } from '../contexts/AppProvider';
 
 
 export default function Profile({navigation}) {
-  const SPECIFICURL = ' https://chat-api-with-auth.up.railway.app/users';
-  const {accessToken} = useContext(AuthContext);
+  const SPECIFICURL = 'https://chat-api-with-auth.up.railway.app/users';
+  const {accessToken, profileImage, handleLogout} = useContext(AuthContext);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [updateStatus, setUpdateStatus] = useState('');
+  const [updateStatus, setUpdateStatus] = useState(false);
+  const [updatingResult, setUpdatingResult] = useState('')
 
-
-
-      /*log out  */
-  const handleLogOut = () => {
-    navigation.navigate('Login', { action: 'logout' });
-  }
 
 
 
@@ -26,28 +21,29 @@ export default function Profile({navigation}) {
       const response = await fetch(SPECIFICURL, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer' + accessToken.accessToken,
+          'Authorization': 'Bearer ' + accessToken.accessToken,
         },
       });
 
       const result = await response.json();
-      if (result.status === '200') {
-        if(result.data.firstName) {
-          setFirstName(result.data.firstName)
+      
+      if (result.status == '200') {
+        if(result.data.firstname) {
+          setFirstName(result.data.firstname)
         }
-        if(result.data.lastName) {
-          setLastName(result.data.lastName);
+        if(result.data.lastname) {
+          setLastName(result.data.lastname);
         }
       }
 
     }catch(error) {
-      console.log(error);
+      console.log('error',error);
     }
   }
 
   useEffect(() => {
     fetchSpecificUser();
-  }, []);
+  }, [updateStatus]);
 
 
   /* update function */
@@ -60,21 +56,23 @@ export default function Profile({navigation}) {
           'Authorization': 'Bearer ' + accessToken.accessToken,
         },
         body: JSON.stringify({
-          'firsname': firstName,
+          'firstname': firstName,
           'lastname': lastName,
         }),
       });
 
       const result = await response.json();
-      if(result.status === '200') {
-        setUpdateStatus('Update successfully!');
+      if(result.status == '200') {
+        setUpdateStatus(!updateStatus);
+        setUpdatingResult('Update successfully')
+        
       } else {
-        setUpdateStatus('Update Fail!!');
+        setUpdatingResult('Update Fail!!');
       }
 
     }catch(error) {
       console.log(error);
-      setUpdateStatus('Update Fail!!');
+      setUpdatingResult('Update Fail!!');
     }
   }
 
@@ -91,8 +89,9 @@ export default function Profile({navigation}) {
       });
 
       const result = await response.json();
-      if(result.status === '200') {
-        handleLogOut();
+      
+      if(result.status == '200') {
+        handleLogout();
         navigation.navigate("Login");
       }
 
@@ -102,11 +101,12 @@ export default function Profile({navigation}) {
 }
 
 
+
   return (
     <View style={styles.container}>
         <Text style={styles.headerText}>Profile</Text>
 
-        <Image  style={styles.img}
+       <Image  style={styles.img}
         source={require('../../assets/favicon.png')}></Image>
 
         <TextInput 
@@ -116,9 +116,9 @@ export default function Profile({navigation}) {
          onChangeText={(text) => setFirstName(text)}
          />
 
-         {updateStatus !== '' && (
-          <Text style={updateStatus === 'Update successfully!' ? styles.successText : styles.errorText}>
-            {updateStatus}
+         {updatingResult !== '' && (
+          <Text style={updatingResult === 'Update successfully!' ? styles.errorText : styles.successText}>
+            {updatingResult}
           </Text>
          )}
 
@@ -130,9 +130,9 @@ export default function Profile({navigation}) {
          onChangeText={(text) => setLastName(text)}
         />
 
-         {updateStatus !== '' && (
-          <Text style={updateStatus === 'Update successfully!' ? styles.successText : styles.errorText}>
-            {updateStatus}
+         {updatingResult !== '' && (
+          <Text style={updatingResult === 'Update successfully!' ? styles.errorText :  styles.successText}>
+            {updatingResult}
           </Text>
          )}
 
@@ -147,7 +147,9 @@ export default function Profile({navigation}) {
 
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogOut}>
+      <TouchableOpacity style={styles.logoutButton} onPress={()=> {
+        handleLogout()
+        navigation.navigate("Login");}}>
         <Text>Logout</Text>
 
       </TouchableOpacity>
@@ -218,6 +220,12 @@ img: {
   height: 100,
   marginVertical: 20,
   marginHorizontal: 20,
+},
+
+successText: {
+  alignSelf: 'flex-start',
+  marginHorizontal: 20,
+  color: 'green',
 },
 
 });

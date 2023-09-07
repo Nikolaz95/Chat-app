@@ -11,6 +11,7 @@ export default function AppProvider({children}) {
   const URL = 'https://chat-api-with-auth.up.railway.app/auth/token';
   const [loginMessage, setLoginMessage] = useState('');
   const navigation = useNavigation();
+  const [profileImage, setProfileImage] = useState(null);
   
   const handleLogin = async (userName,password) => {
     console.log('userName', userName)
@@ -79,7 +80,7 @@ export default function AppProvider({children}) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{accessToken, handleLogin, handleLogout, loginMessage,setLoginMessage}}>
+    <AuthContext.Provider value={{accessToken, handleLogin, handleLogout, loginMessage,setLoginMessage, profileImage, setProfileImage}}>
       {children}
     </AuthContext.Provider>
   )
