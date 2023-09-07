@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     },
 
     inputReg : {
+      backgroundColor: 'skyblue',
       borderWidth: 1,
       borderRadius: 10,
       borderColor: 'black',
